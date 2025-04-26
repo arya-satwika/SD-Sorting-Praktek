@@ -72,7 +72,6 @@ void selectSort(string movies[][3]){
 
 int main()
 {
-    string line;
     string title, rating, nRating;
     int indexArr = 0;
     int sizeArr = lineInFile("film.txt");
