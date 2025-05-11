@@ -1,4 +1,5 @@
-The_Batman 1.6 219
+The_Batman 1.6 221
 The_Ghost_and_the_Darkness_Remastered 4 15
-Daredevil 5 14
-House_MD 4.8 15
+Daredevil 2.3 6
+House_MD 4.7 15
+Jumbo 2.2 5

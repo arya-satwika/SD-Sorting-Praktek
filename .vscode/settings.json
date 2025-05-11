@@ -51,7 +51,7 @@
     },
     "C_Cpp.default.compilerPath": "C:/MinGW/bin/g++.exe",
     "github.copilot.enable": {
-        "*": false,
+        "*": true,
         "plaintext": false,
         "markdown": false,
         "scminput": false
