@@ -4,11 +4,6 @@
 #include <cmath> 
 using namespace std;
 
-
-
-
-
-
 struct Movies_Tree
 {
     string title;
@@ -32,6 +27,7 @@ void changeRating(double newRating, Movies_Tree*& root, string title);
 void printMovie(string movies[][3], int max);
 void insertNewMovie(Movies_Tree *&node);
 Movies_Tree* delMovie(Movies_Tree *root, string title, double rating);
+void newMovie();
 
 void movieToTree(){
     ifstream file("film.txt");
@@ -50,22 +46,20 @@ void movieToTree(){
             root = newNode;
         } else {
             Movies_Tree *current = root;
-            Movies_Tree *parent = nullptr;
 
             while (true) {
-                parent = current;
                 if (rating < current->rating) {
+                    if (current->left == nullptr) {
+                        current->left = newNode;
+                        break;
+                    }
                     current = current->left;
-                    if (current == nullptr) {
-                        parent->left = newNode;
-                        break;
-                    }
                 } else {
-                    current = current->right;
-                    if (current == nullptr) {
-                        parent->right = newNode;
+                    if (current->right == nullptr) {
+                        current->right = newNode;
                         break;
                     }
+                    current = current->right;
                 }
             }
         }
@@ -80,24 +74,18 @@ int hashUser(string user){
     return (first*10 + second) % 5;
 }
 
-// int nodesInTree(Movies_Tree *root) {
-//     if (root == nullptr) {
-//         return 0;
-//     } else {
-//         return 1 + nodesInTree(root->left) + nodesInTree(root->right);
-//     }
-    
-// }
+
 
 void printMovie(Movies_Tree *&fRoot) {
     if (fRoot == nullptr)
         return;
     else{
         printMovie(fRoot->left);
-        cout << "Judul : " << fRoot->title << endl
+        cout << "=================="<< endl 
+             << "Judul : " << fRoot->title << endl
              << "Rating : " << fRoot->rating << endl
              << "Jumlah Rating : " << fRoot->number_of_rating << endl
-             << endl;
+             << "=================="<< endl;
         printMovie(fRoot->right);
     }
 }
@@ -126,11 +114,10 @@ void changeRating(double newRating, Movies_Tree*& fRoot, string title) {
         temp->title = fRoot->title;
         temp->left = nullptr; 
         temp->right = nullptr;
-        
+        cout << "====================================" << endl;        
         cout << "Rating film " << title << " telah diubah menjadi " << temp->rating << endl;
-        
+        cout << "====================================" << endl;
         root = delMovie(root, title, fRoot->rating);
-        cout << "deleted" << endl;
         
         insertNewMovie(temp);
         
@@ -149,7 +136,6 @@ void insertNewMovie(Movies_Tree*&node) {
         if (node->rating < curr->rating) {
             if (curr->left == nullptr) {
                 curr->left = node;
-                cout << "curr =" << curr->left->title << endl;
                 break;
             }
             else
@@ -157,14 +143,12 @@ void insertNewMovie(Movies_Tree*&node) {
         } else if (node->rating >= curr->rating) {
             if (curr->right == nullptr) {
                 curr->right = node;
-                cout << "curr =" << curr->right->title << endl;
                 break;
             }
             else          
             curr = curr->right;
         }
     }
-    cout << "inserted" << endl;
 }
 
 Movies_Tree* delMovie(Movies_Tree *root, string title, double rating) {
@@ -209,20 +193,36 @@ Movies_Tree* delMovie(Movies_Tree *root, string title, double rating) {
     return root;
 }
 
+void newMovie(){
+    Movies_Tree* newMovie = new Movies_Tree;
+    newMovie->left = nullptr;
+    newMovie->right = nullptr;
+    cout << "Masukkan Judul film: ";
+    cin >> newMovie->title;
+    cout << "Masukkan Rating: ";
+    cin >> newMovie -> rating;
+    newMovie->number_of_rating = 1;
+    insertNewMovie(newMovie);
+}
+
+
 void mainMenu(){
     int choice;
     string title;
     double rating;
+    cout << "====================================" << endl;
     cout << "1. Lihat Film" << endl;
     cout << "2. Ubah Rating Film" << endl;
     cout << "3. Tambah Film" << endl;
-    cout << "4. Keluar" << endl;
+    cout << "4. Log Out " << endl;
+    cout << "5. exit" << endl;
     cout << "Pilih menu: ";
     cin >> choice;
     
     switch (choice) {
         case 1:
             printMovie(root);
+            mainMenu();
             break;
         case 2:
             printMovie(root);
@@ -234,13 +234,17 @@ void mainMenu(){
             mainMenu();
             break;
         case 3:
-            // Implement delete movie functionality
+            newMovie();
+            mainMenu();
             break;
-        case 4:
+        case 5:
             cout << "Terima kasih telah menggunakan aplikasi ini" << endl;
             saveToFile(root);
             exit(0);
             break;
+        case 4:
+            introMenu();
+
         default:
             cout << "Pilihan tidak valid." << endl;
     }
@@ -289,6 +293,7 @@ int linearProbing(int oldHash, int newHash){
     }
     return -1;
 }
+
 void registerUser(){
     string username, password;
     cout << "Masukkan username: ";
@@ -300,16 +305,19 @@ void registerUser(){
     {
         users[hash][0] = username;
         users[hash][1] = password;
+        cout << "====================================" << endl;
+        cout << "Username: " << users[hash][0] << endl;
         cout << "Register Berhasil" << endl;
         return;
     }
     else if (users[hash][0] == username)
     {
-        cout << "Username sudah terdaftar" << endl;
+        cout << "====================================" << endl;
+        cout << "Username sudah terdaftar!" << endl;
         registerUser();
         return;
     }
-    else if (users[hash][0] != "")
+    else 
     {
         int newHash = linearProbing(hash, hash+1);
         if (newHash != -1)
@@ -326,8 +334,10 @@ void registerUser(){
 
     }
 }
+
 void introMenu(){
     cout << "Selamat datang di aplikasi film" << endl;
+    cout << "====================================" << endl;
     cout << "1. Login" << endl;
     cout << "2. Register" << endl;
     cout << "3. Keluar" << endl;
@@ -352,12 +362,12 @@ void introMenu(){
         break;
     }
 }
+
 int main()
 {
     movieToTree();
     ofstream clear("film.txt");
     clear.close();
     introMenu();
-        
     return 0;
 }
