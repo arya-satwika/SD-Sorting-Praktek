@@ -285,9 +285,13 @@ int linearProbing(int oldHash, int newHash, string username){
         cout << "Hash table penuh" << endl;
         return -1;
     }
-    else if (users[newHash][0] == "" || users[newHash][0] == "-1")
+    else if (users[newHash][0] == "")
     {
         return newHash;
+    }
+    else if (users[newHash][0] == username)
+    {
+        return -1;
     }
     else
     {
@@ -303,7 +307,7 @@ int existingUser(string username, int hash){
     }
     else if (users[hash][0] == "")
     {
-        return hash;
+        return -1;    
     }
     else
     {
@@ -354,6 +358,7 @@ void registerUser(){
         }
         else{
             cout << "Silahkan login dengan username yang sudah terdaftar" << endl;
+            registerUser();
             return;
         }
         

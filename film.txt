@@ -1,7 +1,6 @@
 The_Batman 1.6 221
-Jumbo 2.6 5
 Daredevil 2.3 6
+Jumbo 2.6 5
 The_Ghost_and_the_Darkness_Remastered 4 15
 Interstellar 4.2 111
-Sinners 4.5 12
 House_MD 4.7 15
