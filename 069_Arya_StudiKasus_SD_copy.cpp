@@ -18,7 +18,7 @@ Movies_Tree *root = nullptr;
 
 void introMenu();
 void mainMenu();
-void login();
+bool login();
 void registerUser();
 void saveToFile(Movies_Tree *&fRoot);
 void movieToTree();
@@ -250,7 +250,7 @@ void mainMenu(){
     }
 }
 
-void login(){
+bool login(){
     string username, password;
     cout << "Masukkan username: ";
     cin >> username;
@@ -264,20 +264,22 @@ void login(){
         {
             cout << "Login Berhasil" << endl;
             movieToTree();
-            mainMenu();
+            return true;
         }
         else
         {
             cout << "Login Gagal" << endl;
+            return false;
 
         }
     }
     else{
         cout << "Login Gagal" << endl;
+        return false;
     }
 }
 
-int linearProbing(int oldHash, int newHash){
+int linearProbing(int oldHash, int newHash, string username){
     if (oldHash == newHash)
     {
         cout << "Hash table penuh" << endl;
@@ -285,13 +287,38 @@ int linearProbing(int oldHash, int newHash){
     }
     else if (users[newHash][0] != "")
     {
-        linearProbing(oldHash, newHash+1);
+        linearProbing(oldHash, (newHash+1) % 5, username);
     }
     else
     {
         return newHash;
     }
     return -1;
+}
+
+int existingUser(string username, int hash){
+    if (users[hash][0] == username)
+    {
+        cout << "====================================" << endl;
+        cout << "User sudah terdaftar" << endl;
+        return -1;
+    }
+    else if (users[hash][0] == "")
+    {
+        return hash;
+    }
+    else
+    {
+        int newHash = (hash+1) % 5;
+        if (hashUser(username) == newHash)
+        {
+            cout << "Hash table penuh" << endl;
+            return true;
+        }
+        else 
+        return existingUser(username, newHash);
+    }
+    
 }
 
 void registerUser(){
@@ -319,7 +346,7 @@ void registerUser(){
     }
     else 
     {
-        int newHash = linearProbing(hash, hash+1);
+        int newHash = linearProbing(hash, (hash+1) % 5, username);
         if (newHash != -1)
         {
             users[newHash][0] = username;
@@ -331,8 +358,29 @@ void registerUser(){
             cout << "Silahkan login dengan username yang sudah terdaftar" << endl;
             return;
         }
-
+        
     }
+}
+
+void deleteUser(){
+    string username;
+    cout << "Masukkan username yang ingin dihapus: ";
+    cin >> username;
+    int hash = hashUser(username);
+    int find = existingUser(username, hash);
+    if(find != -1)
+    {
+        users[find][0] = "-1";
+        users[find][1] = "-1";
+        cout << "User berhasil dihapus" << endl;
+        return;
+    }   
+    else
+    {
+        cout << "User tidak ditemukan" << endl;
+        return;
+    }
+    return;
 }
 
 void introMenu(){
@@ -341,13 +389,16 @@ void introMenu(){
     cout << "1. Login" << endl;
     cout << "2. Register" << endl;
     cout << "3. Keluar" << endl;
+    cout << "4. Delete User" << endl;
     cout << "Pilih menu: ";
     int choice;
     cin >> choice;
     switch (choice)
     {
     case 1:
-        login();
+        while(!login()){
+            cout << "Silahkan coba lagi" << endl;
+        }
         mainMenu();
         break;
     case 2:
@@ -358,10 +409,16 @@ void introMenu(){
         cout << "Terima kasih telah menggunakan aplikasi ini" << endl;
         exit(0);
         break;
+    case 4:
+        deleteUser();
+        introMenu();
+        break;
     default:
         break;
     }
 }
+
+
 
 int main()
 {
