@@ -42,27 +42,7 @@ void movieToTree(){
         newNode->left = nullptr;
         newNode->right = nullptr;
 
-        if (root == nullptr) {
-            root = newNode;
-        } else {
-            Movies_Tree *current = root;
-
-            while (true) {
-                if (rating < current->rating) {
-                    if (current->left == nullptr) {
-                        current->left = newNode;
-                        break;
-                    }
-                    current = current->left;
-                } else {
-                    if (current->right == nullptr) {
-                        current->right = newNode;
-                        break;
-                    }
-                    current = current->right;
-                }
-            }
-        }
+        insertNewMovie(newNode);
     }
     file.close();
 }
@@ -132,6 +112,10 @@ void changeRating(double newRating, Movies_Tree*& fRoot, string title) {
 
 void insertNewMovie(Movies_Tree*&node) {
     Movies_Tree *curr = root;
+    if (root == nullptr) {
+        root = node;
+        return;
+    }
     while(true) {
         if (node->rating < curr->rating) {
             if (curr->left == nullptr) {
